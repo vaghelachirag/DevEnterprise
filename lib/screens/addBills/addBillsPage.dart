@@ -1,11 +1,10 @@
 import 'dart:convert';
 
+import 'package:deventerprise/uttils/product_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../extensions/utils/dialougs.dart';
 import '../../uttils/category_dropdown_widget.dart';
-import '../qrCodeScan/custom_qr_code_scanner.dart';
 import 'addBillProvider.dart';
 
 class AddBillsPage extends ConsumerWidget {
@@ -115,21 +114,15 @@ class AddBillsPage extends ConsumerWidget {
                     buildTextField(
                         'Mobile Number', Icons.phone, formState.mobileNumberController),
                     buildTextField('City', Icons.location_city, formState.cityController),
-                    buildTextField(
-                        'Item Name', Icons.devices, formState.itemNameController),
+                    ProductMasterDropdown(),
+                    const SizedBox(height: 10),
+                    ProductDropdownWidget(),
                     buildDropdownField(
                       label: 'Color',
                       icon: Icons.color_lens,
                       options: colorOptions,
                       controller: formState.colorController,
                     ),
-                    CategoryDropdownWidget(
-                      ref: ref,
-                      label: 'Select Option',
-                      icon: Icons.list,
-                      options: ['Option 1', 'Option 2', 'Option 3'],
-                    ),
-                    buildTextField('HSN', Icons.confirmation_number, formState.hsnController),
                     buildTextField('Amount', Icons.currency_rupee, formState.amountController),
                     const SizedBox(height: 24),
                     SizedBox(
@@ -205,7 +198,6 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetR
                 );
 
                 ref.read(dropdownValueProvider.notifier).state = 'Option 2';
-
                 Navigator.pop(context); // Close dialog
 
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -1,40 +1,42 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../screens/addBills/provider/category_provider.dart';
 
-import '../screens/addBills/addBillProvider.dart';
+class ProductMasterDropdown extends ConsumerWidget {
+  const ProductMasterDropdown({super.key});
 
-Widget CategoryDropdownWidget({
-  required WidgetRef ref,
-  required String label,
-  required IconData icon,
-  required List<String> options,
-}) {
-  final selectedValue = ref.watch(dropdownValueProvider);
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoriesAsync = ref.watch(categoryListProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: DropdownButtonFormField<String>(
-      value: options.contains(selectedValue) ? selectedValue : null,
-      items: options.map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+    return categoriesAsync.when(
+      data: (categoryList) {
+        return DropdownButtonFormField<String>(
+          value: selectedCategory,
+          hint: const Text("Select Category"),
+          items: categoryList.map((category) {
+            return DropdownMenuItem<String>(
+              value: category["categoryname"],
+              child: Text(category["categoryname"]),
+            );
+          }).toList(),
+            onChanged: (value) {
+              ref.read(selectedCategoryProvider.notifier).state = value;
+              ref.read(selectedProductProvider.notifier).state = null; // reset product
+              if (value != null && value.isNotEmpty) {
+                ref.invalidate(productsByCategoryProvider);
+              }
+            },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
         );
-      }).toList(),
-      onChanged: (value) {
-        ref.read(dropdownValueProvider.notifier).state = value;
       },
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        filled: true,
-        fillColor: Colors.grey.shade100,
-      ),
-      validator: (value) =>
-      value == null || value.isEmpty ? 'Required' : null,
-    ),
-  );
+      loading: () => const CircularProgressIndicator(),
+      error: (err, _) => Text("Error: $err"),
+    );
+  }
 }
