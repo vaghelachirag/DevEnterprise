@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../extensions/utils/dialougs.dart';
+import '../../uttils/category_dropdown_widget.dart';
 import '../qrCodeScan/custom_qr_code_scanner.dart';
 import 'addBillProvider.dart';
 
@@ -81,7 +82,7 @@ class AddBillsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(addBillFormProvider);
     final formNotifier = ref.read(addBillFormProvider.notifier);
-    formState.categoryController.text = "Snacks"; // Set before build
+    formState.categoryController.text = "Mobile"; // Set before build
 
     return Scaffold(
       appBar: AppBar(
@@ -90,7 +91,7 @@ class AddBillsPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             onPressed: () async {
-              showQrScannerDialog(context, formNotifier);
+              showQrScannerDialog(context, formNotifier,ref);
             },
           )
         ],
@@ -122,11 +123,11 @@ class AddBillsPage extends ConsumerWidget {
                       options: colorOptions,
                       controller: formState.colorController,
                     ),
-                    buildDropdownField(
-                      label: 'Category',
-                      icon: Icons.category,
-                      options: categoryOptions,
-                      controller: formState.categoryController,
+                    CategoryDropdownWidget(
+                      ref: ref,
+                      label: 'Select Option',
+                      icon: Icons.list,
+                      options: ['Option 1', 'Option 2', 'Option 3'],
                     ),
                     buildTextField('HSN', Icons.confirmation_number, formState.hsnController),
                     buildTextField('Amount', Icons.currency_rupee, formState.amountController),
@@ -159,7 +160,7 @@ class AddBillsPage extends ConsumerWidget {
   }
 }
 
-void showQrScannerDialog(BuildContext context, AddBillNotifier formNotifier) {
+void showQrScannerDialog(BuildContext context, AddBillNotifier formNotifier, WidgetRef ref) {
   showDialog(
     context: context,
     builder: (ctx) {
@@ -168,14 +169,14 @@ void showQrScannerDialog(BuildContext context, AddBillNotifier formNotifier) {
         content: SizedBox(
           width: double.maxFinite,
           height: 300,
-          child: mobileScanner(ctx, formNotifier),
+          child: mobileScanner(ctx, formNotifier,ref),
         ),
       );
     },
   );
 }
 
-Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier) {
+Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetRef ref) {
   return Center(
     child: Container(
       margin: const EdgeInsets.all(15),
@@ -203,6 +204,7 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier) {
                   qty: productData['qty']?.toString() ?? '',
                 );
 
+                ref.read(dropdownValueProvider.notifier).state = 'Option 2';
 
                 Navigator.pop(context); // Close dialog
 

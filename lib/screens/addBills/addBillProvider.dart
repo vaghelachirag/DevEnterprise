@@ -112,3 +112,4 @@ final addBillFormProvider =
 StateNotifierProvider<AddBillNotifier, AddBillProvider>(
         (ref) => AddBillNotifier());
 
+final dropdownValueProvider = StateProvider<String?>((ref) => null);
