@@ -1,6 +1,8 @@
+import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// Provider state (form controllers + flags)
 class AddBillProvider {
   final TextEditingController idController;
   final TextEditingController customerNameController;
@@ -12,20 +14,8 @@ class AddBillProvider {
   final TextEditingController hsnController;
   final TextEditingController amountController;
   final bool isSubmitting;
+  final bool? submitSuccess; // ✅ NEW: null = not submitted, true/false = result
   final GlobalKey<FormState> formKey;
-
-  void setFieldValues({
-    String? id,
-    String? itemName,
-    String? amount,
-    String? qty,
-  }) {
-    if (id != null) idController.text = id;
-    if (itemName != null) itemNameController.text = itemName;
-    if (amount != null) amountController.text = amount;
-    // If you have qtyController
-    // if (qty != null) qtyController.text = qty;
-  }
 
   AddBillProvider({
     required this.idController,
@@ -39,9 +29,13 @@ class AddBillProvider {
     required this.amountController,
     required this.formKey,
     this.isSubmitting = false,
+    this.submitSuccess,
   });
 
-  AddBillProvider copyWith({bool? isSubmitting}) {
+  AddBillProvider copyWith({
+    bool? isSubmitting,
+    bool? submitSuccess,
+  }) {
     return AddBillProvider(
       idController: idController,
       customerNameController: customerNameController,
@@ -54,12 +48,16 @@ class AddBillProvider {
       amountController: amountController,
       formKey: formKey,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      submitSuccess: submitSuccess ?? this.submitSuccess,
     );
   }
 }
 
+// Notifier
 class AddBillNotifier extends StateNotifier<AddBillProvider> {
-  AddBillNotifier() : super(
+  final Ref ref;
+  AddBillNotifier(this.ref)
+      : super(
     AddBillProvider(
       idController: TextEditingController(
         text: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -88,28 +86,50 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
     if (itemName != null) state.itemNameController.text = itemName;
     if (category != null) state.categoryController.text = category;
     if (amount != null) state.amountController.text = amount;
+    if (itemName != null) state.itemNameController.text = itemName;
     // If you add a qtyController later, set it here
     // if (qty != null) state.qtyController.text = qty;
   }
 
-
+  /// ✅ Submit form
   Future<void> submitData() async {
     if (!state.formKey.currentState!.validate()) return;
+    state = state.copyWith(isSubmitting: true, submitSuccess: null);
 
-    state = state.copyWith(isSubmitting: true);
+    final selectedProduct = ref.watch(selectedProductProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+
 
     try {
-      // TODO: Replace with your API or Google Sheet call
-      await Future.delayed(const Duration(seconds: 2));
-    } finally {
-      state = state.copyWith(isSubmitting: false);
+      final apiService = ref.read(apiServiceProvider);
+
+      final data = {
+        "Id": state.idController.text,
+        "Date": "2025-08-17",
+        "CustomerName": state.customerNameController.text,
+        "MobileNumber": state.mobileNumberController.text,
+        "City": state.cityController.text,
+        "Category": selectedProduct.toString(),
+        "ProductName": selectedCategory.toString(),
+        "PurchasePrice": "200",
+        "SellingPrice": state.amountController.text,
+        "Qty": "1"
+      };
+
+      final result = await apiService.submitData(data);
+
+      state = state.copyWith(isSubmitting: false, submitSuccess: result);
+    } catch (e) {
+      state = state.copyWith(isSubmitting: false, submitSuccess: false);
     }
   }
 }
 
-
+/// Form provider
 final addBillFormProvider =
 StateNotifierProvider<AddBillNotifier, AddBillProvider>(
-        (ref) => AddBillNotifier());
+      (ref) => AddBillNotifier(ref),
+);
 
+/// Dropdown value provider
 final dropdownValueProvider = StateProvider<String?>((ref) => null);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
 import 'package:deventerprise/uttils/product_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,11 +14,6 @@ class AddBillsPage extends ConsumerWidget {
   final List<String> colorOptions = [
     'Black', 'White', 'Silver', 'Gold', 'Blue', 'Red', 'Green', 'Gray',
     'Pink', 'Purple', 'Yellow', 'Orange', 'Brown', 'Other',
-  ];
-
-  final List<String> categoryOptions = [
-    'Mobile', 'Smart Watch', 'Accessories', 'Tablet', 'Earbuds', 'Charger',
-    'Cover', 'Screen Guard', 'Cable', 'Power Bank', 'Other',
   ];
 
 
@@ -81,7 +77,11 @@ class AddBillsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(addBillFormProvider);
     final formNotifier = ref.read(addBillFormProvider.notifier);
-    formState.categoryController.text = "Mobile"; // Set before build
+    final selectedProduct = ref.watch(selectedProductProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
+
+
+    print("Selected$selectedCategory");
 
     return Scaffold(
       appBar: AppBar(
@@ -142,6 +142,29 @@ class AddBillsPage extends ConsumerWidget {
                             : const Text('Submit', style: TextStyle(fontSize: 18)),
                       ),
                     ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await ref.read(addBillFormProvider.notifier).submitData();
+
+                        final submitResult = ref.read(addBillFormProvider).submitSuccess;
+
+                        if (submitResult != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                submitResult ? "Form Submitted ✅" : "Failed ❌",
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final isSubmitting = ref.watch(addBillFormProvider).isSubmitting;
+                          return Text(isSubmitting ? "Submitting..." : "Submit");
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -187,17 +210,16 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetR
               try {
                 final Map<String, dynamic> productData = jsonDecode(code);
 
-
                 // Fill form fields directly
                 formNotifier.setFieldValues(
                   id: productData['productId']?.toString() ?? '',
-                  category: 'Cover' ?? '',
+                  category:  productData['category']?.toString() ?? '',
                   itemName: productData['productName']?.toString() ?? '',
                   amount: productData['price']?.toString() ?? '',
                   qty: productData['qty']?.toString() ?? '',
                 );
-
-                ref.read(dropdownValueProvider.notifier).state = 'Option 2';
+                ref.read(scannedCategoryProvider.notifier).state = productData['productCategory']?.toString() ?? '';
+                ref.read(scannedProductProvider.notifier).state = productData['productName']?.toString() ?? '';
                 Navigator.pop(context); // Close dialog
 
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -28,4 +28,7 @@ final productsByCategoryProvider = FutureProvider<List<Map<String, dynamic>>>((r
   return apiService.fetchProductsByCategory(category);
 });
 
+final scannedCategoryProvider = StateProvider<String?>((ref) => null);
+final scannedProductProvider = StateProvider<String?>((ref) => null);
+
 

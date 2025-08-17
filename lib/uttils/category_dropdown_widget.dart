@@ -10,6 +10,20 @@ class ProductMasterDropdown extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesAsync = ref.watch(categoryListProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final scannedCategory = ref.watch(scannedCategoryProvider);
+    final scannedProduct = ref.watch(scannedProductProvider);
+
+
+    // If scanned category exists and is valid, update selected category
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scannedCategory != null &&
+          scannedCategory.isNotEmpty &&
+          scannedCategory != selectedCategory) {
+        ref.read(selectedCategoryProvider.notifier).state = scannedCategory;
+        ref.read(selectedProductProvider.notifier).state = null;
+        ref.invalidate(productsByCategoryProvider);
+      }
+    });
 
     return categoriesAsync.when(
       data: (categoryList) {
@@ -22,13 +36,13 @@ class ProductMasterDropdown extends ConsumerWidget {
               child: Text(category["categoryname"]),
             );
           }).toList(),
-            onChanged: (value) {
-              ref.read(selectedCategoryProvider.notifier).state = value;
-              ref.read(selectedProductProvider.notifier).state = null; // reset product
-              if (value != null && value.isNotEmpty) {
-                ref.invalidate(productsByCategoryProvider);
-              }
-            },
+          onChanged: (value) {
+            ref.read(selectedCategoryProvider.notifier).state = value;
+          //  ref.read(selectedProductProvider.notifier).state = null; // reset product
+            if (value != null && value.isNotEmpty) {
+              ref.invalidate(productsByCategoryProvider);
+            }
+          },
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),

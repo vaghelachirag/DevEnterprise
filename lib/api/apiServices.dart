@@ -60,4 +60,22 @@ class ApiService {
     }
   }
 
+
+  /// Submit form data
+  Future<bool> submitData(Map<String, String> data) async {
+    final Uri url = Uri.parse(_baseUrl);
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      final res = jsonDecode(response.body);
+      return res["success"] == true;
+    } else {
+      throw Exception("Failed to submit data");
+    }
+  }
 }
