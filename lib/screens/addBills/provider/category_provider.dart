@@ -1,4 +1,6 @@
 // lib/providers/category_provider.dart
+import 'package:deventerprise/model/category_model.dart';
+import 'package:deventerprise/model/product_list_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../api/apiServices.dart';
@@ -7,7 +9,7 @@ import '../../../api/apiServices.dart';
 final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
 
 // Create the FutureProvider for categories
-final categoryListProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final categoryListProvider = FutureProvider<List<CategoryModel>>((ref) async {
   final apiService = ref.watch(apiServiceProvider); // get ApiService instance
   return apiService.fetchCategories(); // call method from service
 });
@@ -18,15 +20,13 @@ final selectedCategoryProvider = StateProvider<String?>((ref) => null);
 // Holds the selected product name
 final selectedProductProvider = StateProvider<String?>((ref) => null);
 
-// FutureProvider to fetch products when category changes
-final productsByCategoryProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  final category = ref.watch(selectedCategoryProvider);
-  if (category == null || category.isEmpty) {
-    return [];
-  }
-  final apiService = ref.watch(apiServiceProvider);
-  return apiService.fetchProductsByCategory(category);
+
+// Create the FutureProvider for categories
+final productsByCategoryProvider = FutureProvider<List<ProductListModel>>((ref) async {
+  final apiService = ref.watch(apiServiceProvider); // get ApiService instance
+  return apiService.fetchProductsByCategory("Teddy Bear"); // call method from service
 });
+
 
 final scannedCategoryProvider = StateProvider<String?>((ref) => null);
 final scannedProductProvider = StateProvider<String?>((ref) => null);

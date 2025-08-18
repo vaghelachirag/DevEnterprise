@@ -1,4 +1,5 @@
 import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -100,12 +101,17 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
 
+    double price = double.tryParse(state.amountController.text) ?? 0;
+    int qty = int.tryParse("1") ?? 0;
+    double totalAmount = price * qty;
+
     try {
       final apiService = ref.read(apiServiceProvider);
-
+      String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
       final data = {
+        "action": "addBill",
         "Id": state.idController.text,
-        "Date": "2025-08-17",
+        "Date": todayDate,
         "CustomerName": state.customerNameController.text,
         "MobileNumber": state.mobileNumberController.text,
         "City": state.cityController.text,

@@ -16,7 +16,7 @@ class ProductDropdownWidget extends ConsumerWidget {
     return productsAsync.when(
       data: (productList) {
         final productNames = productList
-            .map((p) => p["productname"].toString().trim())
+            .map((p) => p.toString().trim())
             .toList();
 
         // Auto-select scanned product if valid

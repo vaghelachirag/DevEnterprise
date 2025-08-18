@@ -32,8 +32,8 @@ class ProductMasterDropdown extends ConsumerWidget {
           hint: const Text("Select Category"),
           items: categoryList.map((category) {
             return DropdownMenuItem<String>(
-              value: category["categoryname"],
-              child: Text(category["categoryname"]),
+              value: category.id.toString(),
+              child: Text(category.name),
             );
           }).toList(),
           onChanged: (value) {

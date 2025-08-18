@@ -142,29 +142,6 @@ class AddBillsPage extends ConsumerWidget {
                             : const Text('Submit', style: TextStyle(fontSize: 18)),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await ref.read(addBillFormProvider.notifier).submitData();
-
-                        final submitResult = ref.read(addBillFormProvider).submitSuccess;
-
-                        if (submitResult != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                submitResult ? "Form Submitted ✅" : "Failed ❌",
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: Consumer(
-                        builder: (context, ref, _) {
-                          final isSubmitting = ref.watch(addBillFormProvider).isSubmitting;
-                          return Text(isSubmitting ? "Submitting..." : "Submit");
-                        },
-                      ),
-                    )
                   ],
                 ),
               ),
