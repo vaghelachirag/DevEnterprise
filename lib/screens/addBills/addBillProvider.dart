@@ -57,11 +57,15 @@ class AddBillProvider {
 // Notifier
 class AddBillNotifier extends StateNotifier<AddBillProvider> {
   final Ref ref;
+
   AddBillNotifier(this.ref)
       : super(
     AddBillProvider(
       idController: TextEditingController(
-        text: DateTime.now().millisecondsSinceEpoch.toString(),
+        text: DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString(),
       ),
       customerNameController: TextEditingController(),
       mobileNumberController: TextEditingController(),
@@ -93,45 +97,83 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
   }
 
   /// ✅ Submit form
-  Future<void> submitData() async {
+  Future<void> submitData(BuildContext context) async {
     if (!state.formKey.currentState!.validate()) return;
     state = state.copyWith(isSubmitting: true, submitSuccess: null);
 
     final selectedProduct = ref.watch(selectedProductProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
+    // safely parse values
     double price = double.tryParse(state.amountController.text) ?? 0;
-    int qty = int.tryParse("1") ?? 0;
+    int qty = 1; // default 1
     double totalAmount = price * qty;
 
     try {
       final apiService = ref.read(apiServiceProvider);
       String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
       final data = {
         "action": "addBill",
-        "Id": state.idController.text,
+        "Id": state.idController.text.trim(),
         "Date": todayDate,
-        "CustomerName": state.customerNameController.text,
-        "MobileNumber": state.mobileNumberController.text,
-        "City": state.cityController.text,
-        "Category": selectedProduct.toString(),
-        "ProductName": selectedCategory.toString(),
-        "PurchasePrice": "200",
-        "SellingPrice": state.amountController.text,
-        "Qty": "1",
-        "TotalAmount": totalAmount
+        "CustomerName": state.customerNameController.text.trim(),
+        "MobileNumber": state.mobileNumberController.text.trim(),
+        "City": state.cityController.text.trim(),
+        "Category": selectedCategory?.toString() ?? "",
+        "ProductName": selectedProduct?.toString() ?? "",
+        "PurchasePrice": "200", // keep as string
+        "SellingPrice": price.toStringAsFixed(2), // force string
+        "Qty": qty.toString(), // force string
+        "TotalAmount": totalAmount.toStringAsFixed(2), // force string
       };
 
       final result = await apiService.submitData(data);
 
+      if (result) {
+        // ✅ Clear all fields after success
+        state.customerNameController.clear();
+        state.mobileNumberController.clear();
+        state.cityController.clear();
+        state.amountController.clear();
+        state.idController.clear();
+
+        // ✅ Reset dropdowns
+        ref
+            .read(selectedProductProvider.notifier)
+            .state = null;
+        ref
+            .read(selectedCategoryProvider.notifier)
+            .state = null;
+
+        // ✅ Show success dialog
+        showDialog(
+          context: context,
+          builder: (ctx) =>
+              AlertDialog(
+                title: const Text("Success ✅"),
+                content: const Text("Bill submitted successfully."),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text("OK"),
+                  ),
+                ],
+              ),
+        );
+      }
+
       state = state.copyWith(isSubmitting: false, submitSuccess: result);
     } catch (e) {
       state = state.copyWith(isSubmitting: false, submitSuccess: false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed ❌: $e")),
+      );
     }
   }
 }
 
-/// Form provider
+  /// Form provider
 final addBillFormProvider =
 StateNotifierProvider<AddBillNotifier, AddBillProvider>(
       (ref) => AddBillNotifier(ref),

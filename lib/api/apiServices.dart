@@ -75,7 +75,7 @@ class ApiService {
       body: jsonEncode(data),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 302) {
       final res = jsonDecode(response.body);
       return res["success"] == true;
     } else {

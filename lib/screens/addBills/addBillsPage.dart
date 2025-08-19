@@ -130,7 +130,7 @@ class AddBillsPage extends ConsumerWidget {
                       child: ElevatedButton(
                         onPressed: formState.isSubmitting
                             ? null
-                            : () => formNotifier.submitData(),
+                            : () => formNotifier.submitData(context),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
