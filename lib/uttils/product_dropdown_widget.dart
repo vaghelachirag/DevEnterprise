@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,10 +14,7 @@ class ProductDropdownWidget extends ConsumerWidget {
 
     return productsAsync.when(
       data: (productList) {
-        final productNames = productList
-            .map((p) => p.toString().trim())
-            .toList();
-
+        final productNames = productList.map((p) => p.productName.trim()).toList();
         // Auto-select scanned product if valid
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (scannedProduct != null &&
@@ -34,9 +30,13 @@ class ProductDropdownWidget extends ConsumerWidget {
           }
         });
 
-        // Ensure value is in the list to avoid assertion error
+        // Ensure value is valid, else reset
         final safeValue =
         productNames.contains(selectedProduct) ? selectedProduct : null;
+
+        if (productNames.isEmpty) {
+          return const Text("⚠️ Select a category first");
+        }
 
         return DropdownButtonFormField<String>(
           value: safeValue,
@@ -49,7 +49,7 @@ class ProductDropdownWidget extends ConsumerWidget {
           }).toList(),
           onChanged: (value) {
             ref.read(selectedProductProvider.notifier).state = value;
-            print("OnChanged: $value");
+            debugPrint("✅ OnChanged: $value");
           },
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

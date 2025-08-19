@@ -100,7 +100,6 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
     final selectedProduct = ref.watch(selectedProductProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-
     double price = double.tryParse(state.amountController.text) ?? 0;
     int qty = int.tryParse("1") ?? 0;
     double totalAmount = price * qty;
@@ -119,7 +118,8 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         "ProductName": selectedCategory.toString(),
         "PurchasePrice": "200",
         "SellingPrice": state.amountController.text,
-        "Qty": "1"
+        "Qty": "1",
+        "TotalAmount": totalAmount
       };
 
       final result = await apiService.submitData(data);

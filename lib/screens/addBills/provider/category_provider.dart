@@ -21,11 +21,16 @@ final selectedCategoryProvider = StateProvider<String?>((ref) => null);
 final selectedProductProvider = StateProvider<String?>((ref) => null);
 
 
-// Create the FutureProvider for categories
+// Create the FutureProvider for products by category
 final productsByCategoryProvider = FutureProvider<List<ProductListModel>>((ref) async {
-  final apiService = ref.watch(apiServiceProvider); // get ApiService instance
-  return apiService.fetchProductsByCategory("Teddy Bear"); // call method from service
+  final category = ref.watch(selectedCategoryProvider);
+  if (category == null || category.isEmpty) {
+    return [];
+  }
+  final apiService = ref.watch(apiServiceProvider);
+  return apiService.fetchProductsByCategory(category); // Fetch by selected category
 });
+
 
 
 final scannedCategoryProvider = StateProvider<String?>((ref) => null);
