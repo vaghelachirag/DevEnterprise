@@ -80,33 +80,28 @@ class AddBillsPage extends ConsumerWidget {
     final selectedProduct = ref.watch(selectedProductProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-
-    print("Selected$selectedCategory");
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add Bill"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            onPressed: () async {
-              showQrScannerDialog(context, formNotifier,ref);
-            },
-          )
-        ],
-      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(10.0),
           child: Card(
             elevation: 6,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(10.0),
               child: Form(
                 key: formState.formKey,
                 child: Column(
                   children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.qr_code_scanner),
+                        onPressed: () async {
+                          showQrScannerDialog(context, formNotifier,ref);
+                        },
+                      ),
+                    ),
                     buildTextField(
                         'ID (Scanned or Auto-generated)', Icons.tag, formState.idController),
                     buildTextField(

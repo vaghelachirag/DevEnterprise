@@ -27,5 +27,19 @@
   "close": "બંધ કરો",
   "customer_list": "ગ્રાહક યાદી",
   "no_customers": "કોઈ ગ્રાહક મળ્યો નથી",
-  "search_customer_hint": "Search by name or category or mobile number or bill number..."
+  "search_customer_hint": "Search by name or category or mobile number or bill number...",
+  "productId": "પ્રોડક્ટ આઈડી",
+  "productName": "પ્રોડક્ટ નામ",
+  "purchasePrice": "ખરીદી કિંમત",
+  "quantity": "જથ્થો",
+  "addProduct": "પ્રોડક્ટ ઉમેરો",
+  "enter": "દાખલ કરો",
+  "productList": "પ્રોડક્ટ યાદી",
+  "noProductsFound": "કોઈ પ્રોડક્ટ મળ્યો નથી",
+  "cancel": "રદ કરો",
+  "deleteProduct": "પ્રોડક્ટ કાઢી નાખો",
+  "deleteConfirmation": "શું તમે ખરેખર આ પ્રોડક્ટ કાઢી નાખવા માંગો છો?",
+  "delete": "કાઢી નાખો",
+  "downloadQR": "QR ડાઉનલોડ કરો"
+
 }

@@ -1,4 +1,5 @@
 import 'package:deventerprise/screens/addBills/addBillsPage.dart';
+import 'package:deventerprise/screens/billingList/billing_screen.dart';
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -11,7 +12,6 @@ class DashboardScreen extends StatelessWidget {
       length: 2, // number of tabs
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Mobile Billing App'),
           bottom: TabBar(
             tabs: [
               Tab(text: 'Add Bill'),
@@ -22,7 +22,7 @@ class DashboardScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             AddBillsPage(), // your form
-            AddBillsPage() // placeholder
+            BillingScreen() // placeholder
           ],
         ),
       ),

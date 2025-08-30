@@ -22,6 +22,11 @@ class $AssetsImagesGen {
   AssetGenImage get splashLogo =>
       const AssetGenImage('assets/images/splash_logo.png');
 
+  /// File path: assets/images/app_logo.png
+  AssetGenImage get whatsappLogo =>
+      const AssetGenImage('assets/icons/whatsappicon.png');
+
+
   /// List of all assets
   List<AssetGenImage> get values => [appLogo, splashLogo];
 }
@@ -47,6 +52,7 @@ class Assets {
 
   static const String aEnv = 'assets/.env';
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsImagesGen icons = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 
   /// List of all assets

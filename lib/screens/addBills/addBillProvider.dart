@@ -138,9 +138,7 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         state.amountController.clear();
         state.idController.clear();
 
-        // ✅ Reset dropdowns
-        ref
-            .read(selectedProductProvider.notifier)
+        ref.read(selectedProductProvider.notifier)
             .state = null;
         ref
             .read(selectedCategoryProvider.notifier)

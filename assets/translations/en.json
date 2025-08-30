@@ -27,5 +27,19 @@
   "close": "Close",
   "customer_list": "Customer List",
   "no_customers": "No customers found",
-  "search_customer_hint": "Search by name or category or mobile number or bill number..."
+  "search_customer_hint": "Search by name or category or mobile number or bill number...",
+  "productId": "Product ID",
+  "productName": "Product Name",
+  "purchasePrice": "Purchase Price",
+  "quantity": "Quantity",
+  "addProduct": "Add Product",
+  "enter": "Enter",
+  "productList": "Product List",
+  "noProductsFound": "No products found",
+  "cancel": "Cancel",
+  "deleteProduct": "Delete Product",
+  "deleteConfirmation": "Are you sure you want to delete this product?",
+  "delete": "Delete",
+  "downloadQR": "Download QR"
+
 }

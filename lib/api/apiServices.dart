@@ -4,6 +4,8 @@ import 'package:deventerprise/model/product_list_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
+import '../model/billing_list_model.dart';
+
 class ApiService {
   final String _baseUrl = dotenv.env['APPS_SCRIPT_URL'] ?? '';
 
@@ -80,6 +82,24 @@ class ApiService {
       return res["success"] == true;
     } else {
       throw Exception("Failed to submit data");
+    }
+  }
+
+
+  Future<List<BillingListModel>> getBillsByDate(String date) async {
+    final url = Uri.parse("$_baseUrl?action=getBill&date=$date");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+
+      if (json is Map<String, dynamic> && json['data'] is List) {
+        final List<dynamic> list = json['data'];
+        return list.map((e) => BillingListModel.fromJson(e)).toList();
+      } else {
+        throw Exception("Invalid response format");
+      }
+    } else {
+      throw Exception("Failed to fetch bills");
     }
   }
 }

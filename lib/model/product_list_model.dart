@@ -22,7 +22,7 @@ class ProductByCategoryResponse {
 }
 
 class ProductListModel {
-  final int id;
+  final String id;
   final String category;
   final String productName;
   final double purchasePrice;
@@ -38,7 +38,7 @@ class ProductListModel {
 
   factory ProductListModel.fromJson(Map<String, dynamic> json) {
     return ProductListModel(
-      id: json['id'] ?? 0,
+      id: json['id'] ?? '',
       category: json['category'] ?? '',
       productName: json['productName'] ?? '',
       purchasePrice: (json['purchasePrice'] ?? 0).toDouble(),

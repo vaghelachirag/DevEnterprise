@@ -27,5 +27,19 @@
   "close": "बंद करें",
   "customer_list": "ग्राहक सूची",
   "no_customers": "कोई ग्राहक नहीं मिला",
-  "search_customer_hint": "Search by name or category or mobile number or bill number..."
+  "search_customer_hint": "Search by name or category or mobile number or bill number...",
+  "productId": "उत्पाद आईडी",
+  "productName": "उत्पाद का नाम",
+  "purchasePrice": "खरीद मूल्य",
+  "quantity": "मात्रा",
+  "addProduct": "उत्पाद जोड़ें",
+  "enter": "दर्ज करें",
+  "productList": "उत्पाद सूची",
+  "noProductsFound": "कोई उत्पाद नहीं मिला",
+  "cancel": "रद्द करें",
+  "deleteProduct": "उत्पाद हटाएं",
+  "deleteConfirmation": "क्या आप वाकई इस उत्पाद को हटाना चाहते हैं?",
+  "delete": "हटाएं",
+  "downloadQR": "QR डाउनलोड करें"
+
 }
