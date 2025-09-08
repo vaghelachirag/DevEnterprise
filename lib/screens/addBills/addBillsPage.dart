@@ -80,64 +80,90 @@ class AddBillsPage extends ConsumerWidget {
     final selectedProduct = ref.watch(selectedProductProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Card(
-            elevation: 6,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Form(
-                key: formState.formKey,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: const Icon(Icons.qr_code_scanner),
-                        onPressed: () async {
-                          showQrScannerDialog(context, formNotifier,ref);
-                        },
-                      ),
-                    ),
-                    buildTextField(
-                        'ID (Scanned or Auto-generated)', Icons.tag, formState.idController),
-                    buildTextField(
-                        'Customer Name', Icons.person, formState.customerNameController),
-                    buildTextField(
-                        'Mobile Number', Icons.phone, formState.mobileNumberController),
-                    buildTextField('City', Icons.location_city, formState.cityController),
-                    ProductMasterDropdown(),
-                    const SizedBox(height: 10),
-                    ProductDropdownWidget(),
-                    buildDropdownField(
-                      label: 'Color',
-                      icon: Icons.color_lens,
-                      options: colorOptions,
-                      controller: formState.colorController,
-                    ),
-                    buildTextField('Amount', Icons.currency_rupee, formState.amountController),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: formState.isSubmitting
-                            ? null
-                            : () => formNotifier.submitData(context),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                          backgroundColor: Colors.teal,
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Confirm Exit'),
+              content: const Text('Are you sure you want to go back? Unsaved changes may be lost.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            );
+          },
+        );
+        return shouldPop ?? false;
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Form(
+                  key: formState.formKey,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          icon: const Icon(Icons.qr_code_scanner),
+                          onPressed: () async {
+                            showQrScannerDialog(context, formNotifier,ref);
+                          },
                         ),
-                        child: formState.isSubmitting
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('Submit', style: TextStyle(fontSize: 18)),
                       ),
-                    ),
-                  ],
+                      buildTextField(
+                          'ID (Scanned or Auto-generated)', Icons.tag, formState.idController),
+                      buildTextField(
+                          'Customer Name', Icons.person, formState.customerNameController),
+                      buildTextField(
+                          'Mobile Number', Icons.phone, formState.mobileNumberController),
+                      buildTextField('City', Icons.location_city, formState.cityController),
+                      ProductMasterDropdown(),
+                      const SizedBox(height: 10),
+                      ProductDropdownWidget(),
+                      buildDropdownField(
+                        label: 'Color',
+                        icon: Icons.color_lens,
+                        options: colorOptions,
+                        controller: formState.colorController,
+                      ),
+                      buildTextField('Amount', Icons.currency_rupee, formState.amountController),
+                      buildTextField(
+                          'Quantity', Icons.add_box, formState.qtyController),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: formState.isSubmitting
+                              ? null
+                              : () => formNotifier.submitData(context),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            backgroundColor: Colors.teal,
+                          ),
+                          child: formState.isSubmitting
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text('Submit', style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -196,16 +222,17 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetR
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('QR Code scanned successfully')),
-                );
+                  },
+                ),
+            ),
+            ),
+            );
+            }
+
+            );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Invalid QR code data')),
                 );
               }
             }
-          },
-        ),
-      ),
-    ),
-  );
-}

@@ -4,6 +4,7 @@ import 'package:deventerprise/model/product_list_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
+import '../model/add_bill_model.dart';
 import '../model/billing_list_model.dart';
 
 class ApiService {
@@ -67,7 +68,7 @@ class ApiService {
   }
 
 
-  /// Submit form data
+ /* /// Submit form data
   Future<bool> submitData(Map<String, Object> data) async {
     final Uri url = Uri.parse(_baseUrl);
 
@@ -82,6 +83,20 @@ class ApiService {
       return res["success"] == true;
     } else {
       throw Exception("Failed to submit data");
+    }
+  }*/
+
+
+  // For Add Product
+  Future<bool> submitData(AddBillModel addBill) async {
+    final uri = Uri.parse(_baseUrl).replace(queryParameters: addBill.toJson());
+    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return true;
+    } else {
+      throw Exception("Failed to add product");
+      return false;
     }
   }
 
@@ -102,4 +117,22 @@ class ApiService {
       throw Exception("Failed to fetch bills");
     }
   }
+
+  /// Reduce product quantity
+  Future<Map<String, dynamic>> reduceQty({
+    required String productId,
+    required int reduceBy,
+  }) async {
+    final uri = Uri.parse(
+        "$_baseUrl?action=reduceQty&Id=$productId&reduceBy=$reduceBy");
+
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception("Failed to reduce qty: ${response.statusCode}");
+    }
+  }
+
 }

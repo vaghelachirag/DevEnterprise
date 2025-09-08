@@ -40,6 +40,7 @@
   "deleteProduct": "उत्पाद हटाएं",
   "deleteConfirmation": "क्या आप वाकई इस उत्पाद को हटाना चाहते हैं?",
   "delete": "हटाएं",
-  "downloadQR": "QR डाउनलोड करें"
+  "downloadQR": "QR डाउनलोड करें",
+  "addBill": "Add Bill"
 
 }

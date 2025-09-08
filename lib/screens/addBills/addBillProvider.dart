@@ -1,3 +1,4 @@
+import 'package:deventerprise/model/add_bill_model.dart';
 import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class AddBillProvider {
   final TextEditingController cityController;
   final TextEditingController itemNameController;
   final TextEditingController colorController;
+  final TextEditingController qtyController;
   final TextEditingController categoryController;
   final TextEditingController hsnController;
   final TextEditingController amountController;
@@ -25,6 +27,7 @@ class AddBillProvider {
     required this.cityController,
     required this.itemNameController,
     required this.colorController,
+    required this.qtyController,
     required this.categoryController,
     required this.hsnController,
     required this.amountController,
@@ -47,6 +50,7 @@ class AddBillProvider {
       categoryController: categoryController,
       hsnController: hsnController,
       amountController: amountController,
+      qtyController: qtyController,
       formKey: formKey,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       submitSuccess: submitSuccess ?? this.submitSuccess,
@@ -76,6 +80,7 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
       hsnController: TextEditingController(),
       amountController: TextEditingController(),
       formKey: GlobalKey<FormState>(),
+      qtyController:  TextEditingController()
     ),
   );
 
@@ -106,45 +111,58 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
     // safely parse values
     double price = double.tryParse(state.amountController.text) ?? 0;
-    int qty = 1; // default 1
+    int qty = int.tryParse(state.qtyController.text) ?? 1; // parse quantity from controller
     double totalAmount = price * qty;
 
     try {
       final apiService = ref.read(apiServiceProvider);
       String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
-      final data = {
-        "action": "addBill",
-        "Id": state.idController.text.trim(),
-        "Date": todayDate,
-        "CustomerName": state.customerNameController.text.trim(),
-        "MobileNumber": state.mobileNumberController.text.trim(),
-        "City": state.cityController.text.trim(),
-        "Category": selectedCategory?.toString() ?? "",
-        "ProductName": selectedProduct?.toString() ?? "",
-        "PurchasePrice": "200", // keep as string
-        "SellingPrice": price.toStringAsFixed(2), // force string
-        "Qty": qty.toString(), // force string
-        "TotalAmount": totalAmount.toStringAsFixed(2), // force string
-      };
 
-      final result = await apiService.submitData(data);
+      final bill = AddBillModel(
+        id: state.idController.text.trim(),
+        action: "addBill",
+        date: todayDate,
+        customerName:  state.customerNameController.text.trim(),
+        mobileNumber: state.mobileNumberController.text.trim(),
+        city: state.cityController.text.trim(),
+        category: selectedCategory?.toString() ?? "",
+        productName:  selectedProduct?.toString() ?? "",
+        purchasePrice: price.toStringAsFixed(2).toString(),
+        sellingPrice: price.toStringAsFixed(2).toString(),
+        quantity:  qty.toString(),
+        totalAmount: totalAmount.toStringAsFixed(2).toString(),
+      );
+
+      final result = await apiService.submitData(bill);
 
       if (result) {
+        try {
+          // Get the product ID from the selected product or form
+          String productId = state.idController.text.trim(); // or get from selectedProduct
+          
+          await apiService.reduceQty(
+            productId: productId,
+            reduceBy: qty,
+          );
+          
+          print('Product quantity reduced successfully');
+        } catch (reduceQtyError) {
+          print('Failed to reduce product quantity: $reduceQtyError');
+          // You might want to show a warning to the user here
+        }
+
         // ✅ Clear all fields after success
         state.customerNameController.clear();
         state.mobileNumberController.clear();
         state.cityController.clear();
         state.amountController.clear();
         state.idController.clear();
+        state.qtyController.clear();
 
         ref.read(selectedProductProvider.notifier)
             .state = null;
-        ref
-            .read(selectedCategoryProvider.notifier)
-            .state = null;
 
-        // ✅ Show success dialog
         showDialog(
           context: context,
           builder: (ctx) =>
@@ -160,7 +178,6 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
               ),
         );
       }
-
       state = state.copyWith(isSubmitting: false, submitSuccess: result);
     } catch (e) {
       state = state.copyWith(isSubmitting: false, submitSuccess: false);
