@@ -222,17 +222,16 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetR
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('QR Code scanned successfully')),
-                  },
-                ),
-            ),
-            ),
-            );
-            }
-
-            );
+                );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Invalid QR code data')),
                 );
               }
             }
+          },
+        ),
+      ),
+    ),
+  );
+}
