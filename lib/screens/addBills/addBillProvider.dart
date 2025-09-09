@@ -36,10 +36,7 @@ class AddBillProvider {
     this.submitSuccess,
   });
 
-  AddBillProvider copyWith({
-    bool? isSubmitting,
-    bool? submitSuccess,
-  }) {
+  AddBillProvider copyWith({bool? isSubmitting, bool? submitSuccess}) {
     return AddBillProvider(
       idController: idController,
       customerNameController: customerNameController,
@@ -63,26 +60,23 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
   final Ref ref;
 
   AddBillNotifier(this.ref)
-      : super(
-    AddBillProvider(
-      idController: TextEditingController(
-        text: DateTime
-            .now()
-            .millisecondsSinceEpoch
-            .toString(),
-      ),
-      customerNameController: TextEditingController(),
-      mobileNumberController: TextEditingController(),
-      cityController: TextEditingController(),
-      itemNameController: TextEditingController(),
-      colorController: TextEditingController(),
-      categoryController: TextEditingController(),
-      hsnController: TextEditingController(),
-      amountController: TextEditingController(),
-      formKey: GlobalKey<FormState>(),
-      qtyController:  TextEditingController()
-    ),
-  );
+    : super(
+        AddBillProvider(
+          idController: TextEditingController(
+            text: DateTime.now().millisecondsSinceEpoch.toString(),
+          ),
+          customerNameController: TextEditingController(),
+          mobileNumberController: TextEditingController(),
+          cityController: TextEditingController(),
+          itemNameController: TextEditingController(),
+          colorController: TextEditingController(),
+          categoryController: TextEditingController(),
+          hsnController: TextEditingController(),
+          amountController: TextEditingController(),
+          formKey: GlobalKey<FormState>(),
+          qtyController: TextEditingController(),
+        ),
+      );
 
   /// ✅ Fill form values from QR code data
   void setFieldValues({
@@ -111,26 +105,27 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
     // safely parse values
     double price = double.tryParse(state.amountController.text) ?? 0;
-    int qty = int.tryParse(state.qtyController.text) ?? 1; // parse quantity from controller
+    int qty =
+        int.tryParse(state.qtyController.text) ??
+        1; // parse quantity from controller
     double totalAmount = price * qty;
 
     try {
       final apiService = ref.read(apiServiceProvider);
       String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
-
       final bill = AddBillModel(
         id: state.idController.text.trim(),
         action: "addBill",
         date: todayDate,
-        customerName:  state.customerNameController.text.trim(),
+        customerName: state.customerNameController.text.trim(),
         mobileNumber: state.mobileNumberController.text.trim(),
         city: state.cityController.text.trim(),
         category: selectedCategory?.toString() ?? "",
-        productName:  selectedProduct?.toString() ?? "",
+        productName: selectedProduct?.toString() ?? "",
         purchasePrice: price.toStringAsFixed(2).toString(),
         sellingPrice: price.toStringAsFixed(2).toString(),
-        quantity:  qty.toString(),
+        quantity: qty.toString(),
         totalAmount: totalAmount.toStringAsFixed(2).toString(),
       );
 
@@ -139,20 +134,17 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
       if (result) {
         try {
           // Get the product ID from the selected product or form
-          String productId = state.idController.text.trim(); // or get from selectedProduct
-          
-          await apiService.reduceQty(
-            productId: productId,
-            reduceBy: qty,
-          );
-          
+          String productId = state.idController.text
+              .trim(); // or get from selectedProduct
+
+          await apiService.reduceQty(productId: productId, reduceBy: qty);
+
           print('Product quantity reduced successfully');
         } catch (reduceQtyError) {
           print('Failed to reduce product quantity: $reduceQtyError');
           // You might want to show a warning to the user here
         }
 
-        // ✅ Clear all fields after success
         state.customerNameController.clear();
         state.mobileNumberController.clear();
         state.cityController.clear();
@@ -160,39 +152,37 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         state.idController.clear();
         state.qtyController.clear();
 
-        ref.read(selectedProductProvider.notifier)
-            .state = null;
+        ref.read(selectedProductProvider.notifier).state = null;
 
         showDialog(
           context: context,
-          builder: (ctx) =>
-              AlertDialog(
-                title: const Text("Success ✅"),
-                content: const Text("Bill submitted successfully."),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text("OK"),
-                  ),
-                ],
+          builder: (ctx) => AlertDialog(
+            title: Text("success".tr()),
+            content: Text("bill_submitted_successfully".tr()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text("ok".tr()),
               ),
+            ],
+          ),
         );
       }
       state = state.copyWith(isSubmitting: false, submitSuccess: result);
     } catch (e) {
       state = state.copyWith(isSubmitting: false, submitSuccess: false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed ❌: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("${"failed".tr()}: $e")));
     }
   }
 }
 
-  /// Form provider
+/// Form provider
 final addBillFormProvider =
-StateNotifierProvider<AddBillNotifier, AddBillProvider>(
+    StateNotifierProvider<AddBillNotifier, AddBillProvider>(
       (ref) => AddBillNotifier(ref),
-);
+    );
 
 /// Dropdown value provider
 final dropdownValueProvider = StateProvider<String?>((ref) => null);

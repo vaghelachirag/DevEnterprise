@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
 import 'package:deventerprise/uttils/product_dropdown_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -12,8 +13,8 @@ class AddBillsPage extends ConsumerWidget {
   AddBillsPage({super.key});
 
   final List<String> colorOptions = [
-    'Black', 'White', 'Silver', 'Gold', 'Blue', 'Red', 'Green', 'Gray',
-    'Pink', 'Purple', 'Yellow', 'Orange', 'Brown', 'Other',
+    'black', 'white', 'silver', 'gold', 'blue', 'red', 'green', 'gray',
+    'pink', 'purple', 'yellow', 'orange', 'brown', 'other',
   ];
 
 
@@ -33,7 +34,7 @@ class AddBillsPage extends ConsumerWidget {
         items: options.map((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(value.tr()),
           );
         }).toList(),
         onChanged: (value) {
@@ -48,7 +49,7 @@ class AddBillsPage extends ConsumerWidget {
           filled: true,
           fillColor: Colors.grey.shade100,
         ),
-        validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+        validator: (value) => value == null || value.isEmpty ? 'required'.tr() : null,
       ),
     );
   }
@@ -68,7 +69,7 @@ class AddBillsPage extends ConsumerWidget {
           filled: true,
           fillColor: Colors.grey.shade100,
         ),
-        validator: (val) => val == null || val.isEmpty ? 'Required' : null,
+        validator: (val) => val == null || val.isEmpty ? 'required'.tr() : null,
       ),
     );
   }
@@ -86,16 +87,16 @@ class AddBillsPage extends ConsumerWidget {
           context: context,
           builder: (ctx) {
             return AlertDialog(
-              title: const Text('Confirm Exit'),
-              content: const Text('Are you sure you want to go back? Unsaved changes may be lost.'),
+              title: Text('confirm_exit'.tr()),
+              content: Text('exit_confirmation_message'.tr()),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(false),
-                  child: const Text('Cancel'),
+                  child: Text('cancel'.tr()),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.of(ctx).pop(true),
-                  child: const Text('Yes'),
+                  child: Text('yes'.tr()),
                 ),
               ],
             );
@@ -126,24 +127,24 @@ class AddBillsPage extends ConsumerWidget {
                         ),
                       ),
                       buildTextField(
-                          'ID (Scanned or Auto-generated)', Icons.tag, formState.idController),
+                          'id_scanned_auto_generated'.tr(), Icons.tag, formState.idController),
                       buildTextField(
-                          'Customer Name', Icons.person, formState.customerNameController),
+                          'customer_name'.tr(), Icons.person, formState.customerNameController),
                       buildTextField(
-                          'Mobile Number', Icons.phone, formState.mobileNumberController),
-                      buildTextField('City', Icons.location_city, formState.cityController),
+                          'mobileNumber'.tr(), Icons.phone, formState.mobileNumberController),
+                      buildTextField('city'.tr(), Icons.location_city, formState.cityController),
                       ProductMasterDropdown(),
                       const SizedBox(height: 10),
                       ProductDropdownWidget(),
                       buildDropdownField(
-                        label: 'Color',
+                        label: 'color'.tr(),
                         icon: Icons.color_lens,
                         options: colorOptions,
                         controller: formState.colorController,
                       ),
-                      buildTextField('Amount', Icons.currency_rupee, formState.amountController),
+                      buildTextField('amount'.tr(), Icons.currency_rupee, formState.amountController),
                       buildTextField(
-                          'Quantity', Icons.add_box, formState.qtyController),
+                          'quantity'.tr(), Icons.add_box, formState.qtyController),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -159,7 +160,7 @@ class AddBillsPage extends ConsumerWidget {
                           ),
                           child: formState.isSubmitting
                               ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text('Submit', style: TextStyle(fontSize: 18)),
+                              : Text('submit'.tr(), style: const TextStyle(fontSize: 18)),
                         ),
                       ),
                     ],
@@ -179,7 +180,7 @@ void showQrScannerDialog(BuildContext context, AddBillNotifier formNotifier, Wid
     context: context,
     builder: (ctx) {
       return AlertDialog(
-        title: const Text("Scan QR Code"),
+        title: Text("scan_qr_code".tr()),
         content: SizedBox(
           width: double.maxFinite,
           height: 300,
@@ -221,11 +222,11 @@ Widget mobileScanner(BuildContext context, AddBillNotifier formNotifier, WidgetR
                 Navigator.pop(context); // Close dialog
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('QR Code scanned successfully')),
+                  SnackBar(content: Text('qr_code_scanned_successfully'.tr())),
                 );
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Invalid QR code data')),
+                  SnackBar(content: Text('invalid_qr_code_data'.tr())),
                 );
               }
             }

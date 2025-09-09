@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -47,7 +48,7 @@ void showQrScannerDialog(BuildContext context) {
                   } catch (e) {
                     // If scanned code is not valid JSON
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Invalid QR code format')),
+                      SnackBar(content: Text('invalid_qr_code_format'.tr())),
                     );
                   }
                 }
@@ -61,7 +62,7 @@ void showQrScannerDialog(BuildContext context) {
               controller.dispose();
               Navigator.pop(ctx);
             },
-            child: const Text("Close"),
+            child: Text("close".tr()),
           ),
         ],
       );

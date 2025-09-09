@@ -33,7 +33,7 @@ class BillingScreen extends ConsumerWidget {
           Expanded(
             child: billsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Center(child: Text("Error: $err")),
+              error: (err, _) => Center(child: Text("${"error".tr()}: $err")),
               data: (bills) {
                 // ✅ Filter bills using search query
                 final filtered = bills.where((bill) {
@@ -44,7 +44,28 @@ class BillingScreen extends ConsumerWidget {
                 }).toList();
 
                 if (filtered.isEmpty) {
-                  return Center(child: Text('no_customers'.tr()));
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/app_logo.png',
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'no_customers'.tr(),
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 return ListView.separated(

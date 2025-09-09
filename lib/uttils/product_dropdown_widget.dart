@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,15 +15,17 @@ class ProductDropdownWidget extends ConsumerWidget {
 
     return productsAsync.when(
       data: (productList) {
-        final productNames = productList.map((p) => p.productName.trim()).toList();
+        final productNames = productList
+            .map((p) => p.productName.trim())
+            .toList();
         // Auto-select scanned product if valid
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (scannedProduct != null &&
               scannedProduct.isNotEmpty &&
               scannedProduct != selectedProduct) {
             if (productNames.contains(scannedProduct.trim())) {
-              ref.read(selectedProductProvider.notifier).state =
-                  scannedProduct.trim();
+              ref.read(selectedProductProvider.notifier).state = scannedProduct
+                  .trim();
             } else {
               debugPrint("⚠️ Scanned product not found: $scannedProduct");
               ref.read(selectedProductProvider.notifier).state = null;
@@ -31,21 +34,19 @@ class ProductDropdownWidget extends ConsumerWidget {
         });
 
         // Ensure value is valid, else reset
-        final safeValue =
-        productNames.contains(selectedProduct) ? selectedProduct : null;
+        final safeValue = productNames.contains(selectedProduct)
+            ? selectedProduct
+            : null;
 
         if (productNames.isEmpty) {
-          return const Text("⚠️ Select a category first");
+          return Text("select_category_first".tr());
         }
 
         return DropdownButtonFormField<String>(
           value: safeValue,
-          hint: const Text("Select Product"),
+          hint: Text("select_product".tr()),
           items: productNames.map((name) {
-            return DropdownMenuItem<String>(
-              value: name,
-              child: Text(name),
-            );
+            return DropdownMenuItem<String>(value: name, child: Text(name));
           }).toList(),
           onChanged: (value) {
             ref.read(selectedProductProvider.notifier).state = value;
@@ -58,7 +59,7 @@ class ProductDropdownWidget extends ConsumerWidget {
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (err, _) => Text("Error: $err"),
+      error: (err, _) => Text("${"error".tr()}: $err"),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,7 @@ class ProductMasterDropdown extends ConsumerWidget {
       data: (categoryList) {
         return DropdownButtonFormField<String>(
           value: selectedCategory,
-          hint: const Text("Select Category"),
+          hint: Text("select_category".tr()),
           items: categoryList.map((category) {
             return DropdownMenuItem<String>(
               value: category.name.toString(),
@@ -50,7 +51,7 @@ class ProductMasterDropdown extends ConsumerWidget {
         );
       },
       loading: () => const CircularProgressIndicator(),
-      error: (err, _) => Text("Error: $err"),
+      error: (err, _) => Text("${"error".tr()}: $err"),
     );
   }
 }
