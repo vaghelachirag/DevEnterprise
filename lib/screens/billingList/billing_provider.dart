@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,4 +36,11 @@ Future<void> pickDate(BuildContext context, WidgetRef ref) async {
   if (pickedDate != null) {
     ref.read(selectedDateProvider.notifier).state = pickedDate;
   }
+}
+
+/// Refresh billing data for current date
+void refreshBillingData(WidgetRef ref) {
+  final selectedDate = ref.read(selectedDateProvider);
+  final dateString = DateFormat('dd-MM-yyyy').format(selectedDate);
+  ref.invalidate(billsByDateProvider(dateString));
 }

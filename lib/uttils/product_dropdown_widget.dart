@@ -39,7 +39,18 @@ class ProductDropdownWidget extends ConsumerWidget {
             : null;
 
         if (productNames.isEmpty) {
-          return Text("select_category_first".tr());
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Text(
+              "select_category_first".tr(),
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
+          );
         }
 
         return DropdownButtonFormField<String>(
@@ -52,9 +63,31 @@ class ProductDropdownWidget extends ConsumerWidget {
             ref.read(selectedProductProvider.notifier).state = value;
             debugPrint("✅ OnChanged: $value");
           },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.inventory, color: Colors.teal.shade600),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.teal.shade600, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         );
       },

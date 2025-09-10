@@ -1,5 +1,6 @@
 import 'package:deventerprise/model/add_bill_model.dart';
 import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
+import 'package:deventerprise/screens/billingList/billing_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -113,6 +114,7 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
     try {
       final apiService = ref.read(apiServiceProvider);
       String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      print("📅 Saving bill with date: $todayDate");
 
       final bill = AddBillModel(
         id: state.idController.text.trim(),
@@ -154,6 +156,9 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
         ref.read(selectedProductProvider.notifier).state = null;
 
+        // Refresh billing list providers to show updated data
+        ref.invalidate(billsByDateProvider);
+        
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

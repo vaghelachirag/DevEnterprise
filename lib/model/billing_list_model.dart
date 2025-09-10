@@ -27,17 +27,17 @@ class BillingListModel {
 
   factory BillingListModel.fromJson(Map<String, dynamic> json) {
     return BillingListModel(
-      id: json['Id'] ?? 0,
-      date: json['Date'] ?? '',
-      customerName: json['CustomerName'] ?? '',
-      mobileNumber: json['MobileNumber'] ?? '',
-      city: json['City'] ?? '',
-      category: json['Category'] ?? '',
-      productName: json['ProductName'] ?? '',
-      purchasePrice: json['PurchasePrice'] ?? 0,
-      sellingPrice: json['SellingPrice'] ?? 0,
-      qty: json['Qty'] ?? 0,
-      totalAmount: json['TotalAmount'] ?? '',
+      id: int.tryParse(json['Id']?.toString() ?? '0') ?? 0,
+      date: json['Date']?.toString() ?? '',
+      customerName: json['CustomerName']?.toString() ?? '',
+      mobileNumber: int.tryParse(json['MobileNumber']?.toString() ?? '0') ?? 0,
+      city: json['City']?.toString() ?? '',
+      category: json['Category']?.toString() ?? '',
+      productName: json['ProductName']?.toString() ?? '',
+      purchasePrice: int.tryParse(json['PurchasePrice']?.toString() ?? '0') ?? 0,
+      sellingPrice: int.tryParse(json['SellingPrice']?.toString() ?? '0') ?? 0,
+      qty: int.tryParse(json['Qty']?.toString() ?? '0') ?? 0,
+      totalAmount: int.tryParse(json['TotalAmount']?.toString() ?? '0') ?? 0,
     );
   }
 }
