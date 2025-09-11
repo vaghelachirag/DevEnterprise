@@ -113,13 +113,15 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
     try {
       final apiService = ref.read(apiServiceProvider);
-      String todayDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+      String todayDate = DateFormat(
+        'MM-dd-yyyy',
+      ).format(DateTime.now()).toString();
       print("📅 Saving bill with date: $todayDate");
 
       final bill = AddBillModel(
         id: state.idController.text.trim(),
         action: "addBill",
-        date: todayDate,
+        billDate: todayDate.toString(),
         customerName: state.customerNameController.text.trim(),
         mobileNumber: state.mobileNumberController.text.trim(),
         city: state.cityController.text.trim(),
@@ -158,7 +160,7 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
         // Refresh billing list providers to show updated data
         ref.invalidate(billsByDateProvider);
-        
+
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(

@@ -1,7 +1,7 @@
 class AddBillModel {
   final String id;
   final String action;
-  final String date;
+  final String billDate;
   final String customerName;
   final String mobileNumber;
   final String city;
@@ -15,7 +15,7 @@ class AddBillModel {
   AddBillModel({
     required this.id,
     required this.action,
-    required this.date,
+    required this.billDate,
     required this.customerName,
     required this.mobileNumber,
     required this.city,
@@ -32,7 +32,7 @@ class AddBillModel {
     return {
       "Id": id,
       "action": action,
-      "Date": date,
+      "BillDate": billDate,
       "CustomerName": customerName,
       "MobileNumber": mobileNumber,
       "City": city,
@@ -50,7 +50,7 @@ class AddBillModel {
     return AddBillModel(
       id: json["Id"] ?? "",
       action: json["action"] ?? "",
-      date: json["Date"] ?? "",
+      billDate: json["BillDate"] ?? "",
       customerName: json["CustomerName"] ?? "",
       mobileNumber: json["MobileNumber"] ?? "",
       city: json["City"] ?? "",
