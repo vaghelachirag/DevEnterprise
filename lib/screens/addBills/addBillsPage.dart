@@ -260,7 +260,10 @@ class AddBillsPage extends ConsumerWidget {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.teal.shade600, width: 2),
+                      borderSide: BorderSide(
+                        color: Colors.teal.shade600,
+                        width: 2,
+                      ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -311,7 +314,10 @@ class AddBillsPage extends ConsumerWidget {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.teal.shade600, width: 2),
+                      borderSide: BorderSide(
+                        color: Colors.teal.shade600,
+                        width: 2,
+                      ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -355,44 +361,34 @@ class AddBillsPage extends ConsumerWidget {
             ),
           ),
         ),
-        Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ProductMasterDropdown(),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: ProductDropdownWidget(),
+            ],
+          ),
+          child: ProductMasterDropdown(),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: ProductDropdownWidget(),
         ),
         const SizedBox(height: 16),
       ],
@@ -476,14 +472,12 @@ class AddBillsPage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 24),
-
                       // ID Field
                       buildTextField(
                         'id_scanned_auto_generated'.tr(),
                         Icons.tag,
                         formState.idController,
                       ),
-
                       // Customer Name Field
                       buildTextField(
                         'customer_name'.tr(),
@@ -517,16 +511,15 @@ class AddBillsPage extends ConsumerWidget {
                         controller: formState.colorController,
                       ),
 
-                        // Amount and Quantity Row
-                        buildAmountQuantityRow(
-                          'amount'.tr(),
-                          Icons.currency_rupee,
-                          formState.amountController,
-                          'quantity'.tr(),
-                          Icons.add_box,
-                          formState.qtyController,
-                        ),
-
+                      // Amount and Quantity Row
+                      buildAmountQuantityRow(
+                        'amount'.tr(),
+                        Icons.currency_rupee,
+                        formState.amountController,
+                        'quantity'.tr(),
+                        Icons.add_box,
+                        formState.qtyController,
+                      ),
                       const SizedBox(height: 32),
                       // Submit Button
                       SizedBox(

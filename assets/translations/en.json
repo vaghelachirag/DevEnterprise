@@ -106,5 +106,8 @@
   "no": "No.",
   "particulars": "Particulars",
   "rate": "Rate",
-  "total_amount": "Total: ₹500 100"
+  "total_amount": "Total: ₹500 100",
+  "add_another": "Add Another",
+  "done": "Done",
+  "category_and_product": "Category & Product"
 }

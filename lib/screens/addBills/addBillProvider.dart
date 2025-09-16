@@ -79,6 +79,22 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         ),
       );
 
+  @override
+  void dispose() {
+    // Dispose all TextEditingControllers to prevent memory leaks
+    state.idController.dispose();
+    state.customerNameController.dispose();
+    state.mobileNumberController.dispose();
+    state.cityController.dispose();
+    state.itemNameController.dispose();
+    state.colorController.dispose();
+    state.categoryController.dispose();
+    state.hsnController.dispose();
+    state.amountController.dispose();
+    state.qtyController.dispose();
+    super.dispose();
+  }
+
   /// ✅ Fill form values from QR code data
   void setFieldValues({
     String? id,
@@ -94,6 +110,167 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
     if (itemName != null) state.itemNameController.text = itemName;
     // If you add a qtyController later, set it here
     // if (qty != null) state.qtyController.text = qty;
+  }
+
+  /// ✅ Show beautiful success dialog
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 16,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.teal.shade50, Colors.white],
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Success Icon with Animation
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.teal.shade100,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.teal.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.check_circle,
+                  size: 50,
+                  color: Colors.teal.shade600,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Success Title
+              Text(
+                "success".tr(),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal.shade800,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Success Message
+              Text(
+                "bill_submitted_successfully".tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade700,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.teal.shade300),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          // Reset form for new bill
+                          _resetForm();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.teal.shade600,
+                        ),
+                        child: Text(
+                          "add_another".tr(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: LinearGradient(
+                          colors: [Colors.teal.shade600, Colors.teal.shade700],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.teal.withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          Navigator.pop(context); // Go back to previous screen
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "done".tr(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ Reset form for new bill entry
+  void _resetForm() {
+    state.customerNameController.clear();
+    state.mobileNumberController.clear();
+    state.cityController.clear();
+    state.amountController.clear();
+    state.idController.text = DateTime.now().millisecondsSinceEpoch.toString();
+    state.qtyController.clear();
+    state.colorController.clear();
+    state.itemNameController.clear();
+    state.categoryController.clear();
+    ref.read(selectedProductProvider.notifier).state = null;
+    ref.read(selectedCategoryProvider.notifier).state = null;
   }
 
   /// ✅ Submit form
@@ -149,31 +326,10 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
           // You might want to show a warning to the user here
         }
 
-        state.customerNameController.clear();
-        state.mobileNumberController.clear();
-        state.cityController.clear();
-        state.amountController.clear();
-        state.idController.clear();
-        state.qtyController.clear();
-
-        ref.read(selectedProductProvider.notifier).state = null;
-
         // Refresh billing list providers to show updated data
         ref.invalidate(billsByDateProvider);
 
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text("success".tr()),
-            content: Text("bill_submitted_successfully".tr()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text("ok".tr()),
-              ),
-            ],
-          ),
-        );
+        _showSuccessDialog(context);
       }
       state = state.copyWith(isSubmitting: false, submitSuccess: result);
     } catch (e) {

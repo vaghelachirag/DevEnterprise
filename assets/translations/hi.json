@@ -106,5 +106,8 @@
   "no": "नं.",
   "particulars": "विवरण",
   "rate": "दर",
-  "total_amount": "कुल: ₹500 100"
+  "total_amount": "कुल: ₹500 100",
+  "add_another": "और जोड़ें",
+  "done": "हो गया",
+  "category_and_product": "श्रेणी और उत्पाद"
 }
