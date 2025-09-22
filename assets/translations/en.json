@@ -109,5 +109,8 @@
   "total_amount": "Total: ₹500 100",
   "add_another": "Add Another",
   "done": "Done",
-  "category_and_product": "Category & Product"
+  "category_and_product": "Category & Product",
+  "add_items_first": "Please add items first",
+  "invalid_amount": "Invalid amount",
+  "invalid_quantity": "Invalid quantity"
 }

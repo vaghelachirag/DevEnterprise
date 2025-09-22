@@ -10,22 +10,21 @@ class ProductDropdownWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsync = ref.watch(productsByCategoryProvider);
-    final selectedProduct = ref.watch(selectedProductProvider);
-    final scannedProduct = ref.watch(scannedProductProvider);
+    final selectedProductId = ref.watch(selectedProductProvider); // store ID
+    final scannedProduct = ref.watch(scannedProductProvider); // still name?
 
     return productsAsync.when(
       data: (productList) {
-        final productNames = productList
-            .map((p) => p.productName.trim())
-            .toList();
-        // Auto-select scanned product if valid
+        // If scannedProduct is a name, try to map it to an ID
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (scannedProduct != null &&
               scannedProduct.isNotEmpty &&
-              scannedProduct != selectedProduct) {
-            if (productNames.contains(scannedProduct.trim())) {
-              ref.read(selectedProductProvider.notifier).state = scannedProduct
-                  .trim();
+              scannedProduct != selectedProductId) {
+            final match = productList.firstWhere(
+              (p) => p.productName.trim() == scannedProduct.trim(),
+            );
+            if (match != null) {
+              ref.read(selectedProductProvider.notifier).state = match.id;
             } else {
               debugPrint("⚠️ Scanned product not found: $scannedProduct");
               ref.read(selectedProductProvider.notifier).state = null;
@@ -33,12 +32,12 @@ class ProductDropdownWidget extends ConsumerWidget {
           }
         });
 
-        // Ensure value is valid, else reset
-        final safeValue = productNames.contains(selectedProduct)
-            ? selectedProduct
+        // Ensure selectedProductId is still valid
+        final safeValue = productList.any((p) => p.id == selectedProductId)
+            ? selectedProductId
             : null;
 
-        if (productNames.isEmpty) {
+        if (productList.isEmpty) {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -54,14 +53,17 @@ class ProductDropdownWidget extends ConsumerWidget {
         }
 
         return DropdownButtonFormField<String>(
-          value: safeValue,
+          value: safeValue, // ✅ now ID instead of name
           hint: Text("select_product".tr()),
-          items: productNames.map((name) {
-            return DropdownMenuItem<String>(value: name, child: Text(name));
+          items: productList.map((p) {
+            return DropdownMenuItem<String>(
+              value: p.id, // ✅ ID as value
+              child: Text(p.productName.trim()), // show name
+            );
           }).toList(),
           onChanged: (value) {
             ref.read(selectedProductProvider.notifier).state = value;
-            debugPrint("✅ OnChanged: $value");
+            debugPrint("✅ OnChanged (ID): $value");
           },
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.inventory, color: Colors.teal.shade600),
@@ -87,7 +89,10 @@ class ProductDropdownWidget extends ConsumerWidget {
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
           ),
         );
       },
