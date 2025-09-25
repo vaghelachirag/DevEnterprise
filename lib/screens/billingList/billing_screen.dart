@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../widget/common_loader.dart';
 import '../../widget/dateNavigator.dart';
 import '../billDetail/bill_detail_screen.dart';
 import 'billing_provider.dart';
@@ -32,14 +34,14 @@ class BillingScreen extends ConsumerWidget {
           // ✅ Use AsyncValue.when to handle loading/error/data
           Expanded(
             child: billsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const CommonLoader(message: "Loading Billing..."),
               error: (err, _) => Center(child: Text("${"error".tr()}: $err")),
               data: (bills) {
                 // ✅ Filter bills using search query
                 final filtered = bills.where((bill) {
-                  return bill.customerName
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) ||
+                  return bill.customerName.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ) ||
                       bill.mobileNumber.toString().contains(query);
                 }).toList();
 
@@ -76,11 +78,10 @@ class BillingScreen extends ConsumerWidget {
                     final customer = filtered[index];
                     return GestureDetector(
                       onTap: () {
-                      Navigator.push(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                BillDetailScreen(
+                            builder: (_) => BillDetailScreen(
                               billNo: customer.id.toString(),
                               customerName: customer.customerName,
                               mobileNumber: customer.mobileNumber.toString(),
@@ -88,8 +89,9 @@ class BillingScreen extends ConsumerWidget {
                               billDate: customer.date,
                               productName: customer.productName,
                               category: customer.category,
-                             price: customer.sellingPrice.toString(),
-                                  qty: customer.qty.toString(), totalAmount: customer.totalAmount.toString(),
+                              price: customer.sellingPrice.toString(),
+                              qty: customer.qty.toString(),
+                              totalAmount: customer.totalAmount.toString(),
                             ),
                           ),
                         );
@@ -123,39 +125,50 @@ class BillingScreen extends ConsumerWidget {
                                     const SizedBox(height: 4),
                                     Row(
                                       children: [
-                                        const Icon(Icons.phone,
-                                            size: 16, color: Colors.blueGrey),
+                                        const Icon(
+                                          Icons.phone,
+                                          size: 16,
+                                          color: Colors.blueGrey,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           customer.mobileNumber.toString(),
                                           style: GoogleFonts.poppins(
-                                              fontSize: 13),
+                                            fontSize: 13,
+                                          ),
                                         ),
                                       ],
                                     ),
                                     Row(
                                       children: [
-                                        const Icon(Icons.date_range,
-                                            size: 16, color: Colors.green),
+                                        const Icon(
+                                          Icons.date_range,
+                                          size: 16,
+                                          color: Colors.green,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           // ✅ If customer.date is String, parse safely
                                           customer.date.toString(),
                                           style: GoogleFonts.poppins(
-                                              fontSize: 13),
+                                            fontSize: 13,
+                                          ),
                                         ),
                                       ],
                                     ),
                                     Row(
                                       children: [
-                                        const Icon(Icons.attach_money,
-                                            size: 16, color: Colors.orange),
+                                        const Icon(
+                                          Icons.attach_money,
+                                          size: 16,
+                                          color: Colors.orange,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
-                                          customer.totalAmount
-                                              .toString(),
+                                          customer.totalAmount.toString(),
                                           style: GoogleFonts.poppins(
-                                              fontSize: 13),
+                                            fontSize: 13,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -163,12 +176,12 @@ class BillingScreen extends ConsumerWidget {
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete_forever,
-                                    color: Colors.redAccent),
-                                onPressed: () {
-
-                                },
-                              )
+                                icon: const Icon(
+                                  Icons.delete_forever,
+                                  color: Colors.redAccent,
+                                ),
+                                onPressed: () {},
+                              ),
                             ],
                           ),
                         ),
@@ -193,8 +206,7 @@ class BillingScreen extends ConsumerWidget {
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      onChanged: (val) =>
-      ref.read(searchQueryProvider.notifier).state = val,
+      onChanged: (val) => ref.read(searchQueryProvider.notifier).state = val,
     );
   }
 }
