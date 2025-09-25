@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:deventerprise/screens/addBills/provider/category_provider.dart';
-import 'package:deventerprise/uttils/product_dropdown_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../uttils/category_dropdown_widget.dart';
+import '../../uttils/product_dropdown_widget.dart';
 import 'addBillProvider.dart';
 
 class AddBillsPage extends ConsumerWidget {
@@ -346,14 +346,14 @@ class AddBillsPage extends ConsumerWidget {
     );
   }
 
-  Widget buildCategoryProductRow(WidgetRef ref) {
+  Widget buildCategory(WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
           child: Text(
-            'category_and_product'.tr(),
+            'category'.tr(),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -376,6 +376,25 @@ class AddBillsPage extends ConsumerWidget {
           child: ProductMasterDropdown(),
         ),
         const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget buildProduct(WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+          child: Text(
+            'productName'.tr(),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+        ),
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
@@ -501,8 +520,8 @@ class AddBillsPage extends ConsumerWidget {
                       ),
 
                       // Category and Product Row
-                      buildCategoryProductRow(ref),
-
+                      buildCategory(ref),
+                      buildProduct(ref),
                       // Color Dropdown
                       buildDropdownField(
                         label: 'color'.tr(),

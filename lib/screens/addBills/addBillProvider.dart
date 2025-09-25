@@ -77,7 +77,29 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
           formKey: GlobalKey<FormState>(),
           qtyController: TextEditingController(),
         ),
+      ) {
+    // Sync selected product ID -> product NAME into itemNameController
+    ref.listen<String?>(selectedProductProvider, (previous, next) {
+      if (next == null || next.isEmpty) {
+        state.itemNameController.text = '';
+        return;
+      }
+
+      final productsAsync = ref.read(productsByCategoryProvider);
+      final name = productsAsync.maybeWhen(
+        data: (list) {
+          try {
+            return list.firstWhere((p) => p.id == next).productName.trim();
+          } catch (_) {
+            return null;
+          }
+        },
+        orElse: () => null,
       );
+
+      state.itemNameController.text = name ?? '';
+    });
+  }
 
   @override
   void dispose() {
@@ -303,7 +325,7 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         mobileNumber: state.mobileNumberController.text.trim(),
         city: state.cityController.text.trim(),
         category: selectedCategory?.toString() ?? "",
-        productName: selectedProduct?.toString() ?? "",
+        productName: state.itemNameController.text.trim(),
         purchasePrice: price.toStringAsFixed(2).toString(),
         sellingPrice: price.toStringAsFixed(2).toString(),
         quantity: qty.toString(),

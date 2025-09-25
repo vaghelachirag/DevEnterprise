@@ -37,3 +37,22 @@ final scannedCategoryProvider = StateProvider<String?>((ref) => null);
 final scannedProductProvider = StateProvider<String?>((ref) => null);
 
 
+
+// Derive the selected product NAME from the selected ID and current product list
+final selectedProductNameProvider = Provider<String?>((ref) {
+  final selectedId = ref.watch(selectedProductProvider);
+  if (selectedId == null || selectedId.isEmpty) return null;
+
+  final productsAsync = ref.watch(productsByCategoryProvider);
+
+  return productsAsync.maybeWhen(
+    data: (list) {
+      try {
+        return list.firstWhere((p) => p.id == selectedId).productName.trim();
+      } catch (_) {
+        return null;
+      }
+    },
+    orElse: () => null,
+  );
+});
