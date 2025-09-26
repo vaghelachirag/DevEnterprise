@@ -112,5 +112,14 @@
   "category_and_product": "Category & Product",
   "add_items_first": "Please add items first",
   "invalid_amount": "Invalid amount",
-  "invalid_quantity": "Invalid quantity"
+  "invalid_quantity": "Invalid quantity",
+  "add_multi_item_bill": "Add Multi-Item Bill",
+  "customer_information": "Customer Information",
+  "add_item": "Add Item",
+  "items_list": "Items List",
+  "no_items_added": "No items added yet",
+  "grand_total": "Grand Total",
+  "submit_bill": "Submit Bill",
+  "please_add_at_least_one_item": "Please add at least one item",
+  "please_select_product_and_category": "Please select product and category"
 }

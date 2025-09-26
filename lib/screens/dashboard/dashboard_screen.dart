@@ -1,8 +1,7 @@
+import 'package:deventerprise/screens/addBills/multiItemBillPage.dart';
 import 'package:deventerprise/screens/billingList/billing_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../addBills/addBillsPage.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -159,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
         ),
-        body: TabBarView(children: [AddBillsPage(), BillingScreen()]),
+        body: TabBarView(children: [MultiItemBillPage(), BillingScreen()]),
       ),
     );
   }
