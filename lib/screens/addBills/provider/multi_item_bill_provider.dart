@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../model/add_bill_model.dart';
 import '../../../model/bill_item_model.dart';
 import '../../../model/multi_item_bill_model.dart';
 import '../../billingList/billing_provider.dart';
@@ -103,13 +102,14 @@ class MultiItemBillNotifier extends StateNotifier<MultiItemBillProvider> {
 
     try {
       final apiService = ref.read(apiServiceProvider);
+
       String todayDate = DateFormat(
         'MM-dd-yyyy',
       ).format(DateTime.now()).toString();
 
       final bill = MultiItemBillModel(
         billId: DateTime.now().millisecondsSinceEpoch.toString(),
-        action: "addMultiItemBill",
+        action: "addBill", // same action name for backend
         billDate: todayDate,
         customerName: state.customerNameController.text.trim(),
         mobileNumber: state.mobileNumberController.text.trim(),
@@ -118,26 +118,11 @@ class MultiItemBillNotifier extends StateNotifier<MultiItemBillProvider> {
         grandTotal: state.grandTotal,
       );
 
-      // Submit each item individually (or modify your API to accept multiple items)
+      // Submit ALL items in ONE API call
+      await apiService.submitMultiItemBill(bill);
+
+      // Reduce quantity for all items in ONE API call if supported
       for (final item in state.items) {
-        final singleItemBill = AddBillModel(
-          id: item.productId,
-          action: "addBill",
-          billDate: todayDate,
-          customerName: state.customerNameController.text.trim(),
-          mobileNumber: state.mobileNumberController.text.trim(),
-          city: state.cityController.text.trim(),
-          category: item.category,
-          productName: item.productName,
-          purchasePrice: item.price.toStringAsFixed(2),
-          sellingPrice: item.price.toStringAsFixed(2),
-          quantity: item.quantity.toString(),
-          totalAmount: item.totalAmount.toStringAsFixed(2),
-        );
-
-        await apiService.submitData(singleItemBill);
-
-        // Reduce quantity for each item
         await apiService.reduceQty(
           productId: item.productId,
           reduceBy: item.quantity,
@@ -146,7 +131,6 @@ class MultiItemBillNotifier extends StateNotifier<MultiItemBillProvider> {
 
       // Refresh billing list
       ref.invalidate(billsByDateProvider);
-
       _showSuccessDialog(context);
       _resetForm();
     } catch (e) {

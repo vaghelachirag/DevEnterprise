@@ -318,7 +318,8 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
       print("📅 Saving bill with date: $todayDate");
 
       final bill = AddBillModel(
-        id: state.idController.text.trim(),
+        // Align single-item flow with multi-item: use productId as Id
+        id: (selectedProduct ?? state.idController.text).trim(),
         action: "addBill",
         billDate: todayDate.toString(),
         customerName: state.customerNameController.text.trim(),
@@ -336,9 +337,8 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
 
       if (result) {
         try {
-          // Get the product ID from the selected product or form
-          String productId = state.idController.text
-              .trim(); // or get from selectedProduct
+          // Use selected product ID for stock reduction (fallback to form Id)
+          String productId = (selectedProduct ?? state.idController.text).trim();
 
           await apiService.reduceQty(productId: productId, reduceBy: qty);
 

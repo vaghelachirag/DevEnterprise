@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../model/add_bill_model.dart';
 import '../model/billing_list_model.dart';
+import '../model/multi_item_bill_model.dart';
 
 class ApiService {
   final String _baseUrl = dotenv.env['APPS_SCRIPT_URL'] ?? '';
@@ -102,6 +103,26 @@ class ApiService {
     } else {
       throw Exception("Failed to add product");
       return false;
+    }
+  }
+
+  Future<void> submitMultiItemBill(MultiItemBillModel bill) async {
+    final uri = Uri.parse(_baseUrl);
+
+    final queryParams = {
+      "action": bill.action,
+      "Id": bill.billId,
+      "BillDate": bill.billDate,
+      "CustomerName": bill.customerName,
+      "MobileNumber": bill.mobileNumber,
+      "City": bill.city,
+      "Items": jsonEncode(bill.items.map((item) => item.toJson()).toList()),
+    };
+
+    final url = uri.replace(queryParameters: queryParams);
+    final response = await http.get(url);
+    if (response.statusCode != 200) {
+      throw Exception("Failed to submit bill: ${response.body}");
     }
   }
 
