@@ -351,9 +351,13 @@ class AddBillNotifier extends StateNotifier<AddBillProvider> {
         // Refresh billing list providers to show updated data
         ref.invalidate(billsByDateProvider);
 
+        // Stop progress and mark success before showing dialog
+        state = state.copyWith(isSubmitting: false, submitSuccess: true);
         _showSuccessDialog(context);
       }
-      state = state.copyWith(isSubmitting: false, submitSuccess: result);
+      if (!result) {
+        state = state.copyWith(isSubmitting: false, submitSuccess: false);
+      }
     } catch (e) {
       state = state.copyWith(isSubmitting: false, submitSuccess: false);
       ScaffoldMessenger.of(

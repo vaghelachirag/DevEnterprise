@@ -131,6 +131,8 @@ class MultiItemBillNotifier extends StateNotifier<MultiItemBillProvider> {
 
       // Refresh billing list
       ref.invalidate(billsByDateProvider);
+      // Stop progress and mark success before showing dialog
+      state = state.copyWith(isSubmitting: false, submitSuccess: true);
       _showSuccessDialog(context);
       _resetForm();
     } catch (e) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../model/bill_item_model.dart';
 import '../../widget/common_loader.dart';
 import '../../widget/dateNavigator.dart';
 import '../billDetail/bill_detail_screen.dart';
@@ -85,11 +86,20 @@ class BillingScreen extends ConsumerWidget {
                               mobileNumber: customer.mobileNumber.toString(),
                               address: customer.address,
                               billDate: customer.date,
-                              productName: "",
-                              category: "",
-                              price: "",
-                              qty: "",
-                              totalAmount: customer.totalAmount.toString(),
+                              items: customer.items
+                                  .map(
+                                    (it) => BillItemModel(
+                                      productId: it.productId,
+                                      productName: it.productName,
+                                      category: it.category,
+                                      color: it.color,
+                                      price: it.price.toDouble(),
+                                      quantity: it.quantity,
+                                      totalAmount: it.total.toDouble(),
+                                    ),
+                                  )
+                                  .toList(),
+                              totalAmount: customer.totalAmount,
                             ),
                           ),
                         );
