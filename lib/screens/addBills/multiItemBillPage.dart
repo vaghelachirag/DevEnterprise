@@ -22,6 +22,9 @@ class MultiItemBillPage extends ConsumerWidget {
             builder: (ctx) => AlertDialog(
               title: Text('confirm_exit'.tr()),
               content: Text('exit_confirmation_message'.tr()),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(false),
@@ -29,6 +32,13 @@ class MultiItemBillPage extends ConsumerWidget {
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.of(ctx).pop(true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade400,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   child: Text('yes'.tr()),
                 ),
               ],
@@ -39,122 +49,135 @@ class MultiItemBillPage extends ConsumerWidget {
         return true;
       },
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: Colors.grey.shade100,
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => _showAddItemDialog(context, billNotifier),
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: Text('add_item'.tr()),
+          backgroundColor: Colors.teal,
+        ),
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: billState.formKey,
-              child: Column(
-                children: [
-                  // Customer Information Card
-                  Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'customer_information'.tr(),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: billState.customerNameController,
-                            decoration: InputDecoration(
-                              labelText: 'customer_name'.tr(),
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (val) => val == null || val.isEmpty
-                                ? 'required'.tr()
-                                : null,
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: billState.mobileNumberController,
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-                              labelText: 'mobileNumber'.tr(),
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (val) => val == null || val.isEmpty
-                                ? 'required'.tr()
-                                : null,
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: billState.cityController,
-                            decoration: InputDecoration(
-                              labelText: 'city'.tr(),
-                              border: OutlineInputBorder(),
-                            ),
-                            validator: (val) => val == null || val.isEmpty
-                                ? 'required'.tr()
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ),
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: billState.formKey,
+            child: Column(
+              children: [
+                // Customer Information Card
+                Card(
+                  elevation: 6,
+                  shadowColor: Colors.teal.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  const SizedBox(height: 16),
-                  // Items List
-                  ItemsListWidget(
-                    items: billState.items,
-                    onRemoveItem: billNotifier.removeItem,
-                    onUpdateItem: billNotifier.updateItem,
-                  ),
-                  const SizedBox(height: 16),
-                  // Add Item Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () =>
-                          _showAddItemDialog(context, billNotifier),
-                      icon: const Icon(Icons.add),
-                      label: Text('add_item'.tr()),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: billState.isSubmitting
-                          ? null
-                          : () => billNotifier.submitBill(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: billState.isSubmitting
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              'submit_bill'.tr(),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'customer_information'.tr(),
+                          style: Theme.of(context).textTheme.titleMedium!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal.shade700,
                               ),
-                            ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          controller: billState.customerNameController,
+                          label: 'customer_name'.tr(),
+                          icon: Icons.person,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          controller: billState.mobileNumberController,
+                          label: 'mobileNumber'.tr(),
+                          icon: Icons.phone,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                          controller: billState.cityController,
+                          label: 'city'.tr(),
+                          icon: Icons.location_city,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Items List
+                ItemsListWidget(
+                  items: billState.items,
+                  onRemoveItem: billNotifier.removeItem,
+                  onUpdateItem: billNotifier.updateItem,
+                ),
+
+                const SizedBox(height: 80), // space for bottom button
+              ],
             ),
           ),
+        ),
+
+        // Bottom Submit Button
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            height: 56,
+            child: ElevatedButton(
+              onPressed: billState.isSubmitting
+                  ? null
+                  : () => billNotifier.submitBill(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal.shade600,
+                foregroundColor: Colors.white,
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: billState.isSubmitting
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      'submit_bill'.tr(),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // 🔹 Reusable TextField Builder
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: (val) => val == null || val.isEmpty ? 'required'.tr() : null,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.teal),
+        labelText: label,
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Colors.teal, width: 2),
         ),
       ),
     );
@@ -167,6 +190,7 @@ class MultiItemBillPage extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: SizedBox(
           width: double.maxFinite,
           child: ItemEntryWidget(

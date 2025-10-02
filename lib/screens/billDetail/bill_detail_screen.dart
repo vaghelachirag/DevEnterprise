@@ -97,7 +97,6 @@ class BillDetailScreen extends StatelessWidget {
                   ],
                 ),
                 pw.SizedBox(height: 20),
-
                 // Customer Info
                 pw.Text(
                   "Customer: $customerName",
@@ -111,7 +110,6 @@ class BillDetailScreen extends StatelessWidget {
                 pw.Text("Bill Date: $billDate", style: pw.TextStyle(font: ttf)),
                 pw.Text("Bill No: $billNo", style: pw.TextStyle(font: ttf)),
                 pw.SizedBox(height: 10),
-
                 // Items Table
                 pw.Table.fromTextArray(
                   headers: ["Item Name", "Category", "Price", "Qty", "Total"],
@@ -141,8 +139,46 @@ class BillDetailScreen extends StatelessWidget {
                   headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
                 ),
 
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
 
+                // ✅ Grand Total Row
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Container(
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.black, width: 1),
+                        color: PdfColors.grey200,
+                      ),
+                      child: pw.Row(
+                        children: [
+                          pw.Text(
+                            "Grand Total: ",
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          pw.SizedBox(width: 5),
+                          pw.Text(
+                            "\u20B9$totalAmount",
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 20),
                 // Footer
                 pw.Text(
                   "• Subject to Ahmedabad Jurisdiction",
