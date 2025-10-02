@@ -1,43 +1,65 @@
 class BillingListModel {
-  final int id;
+  final int billId;
   final String date;
+  final String address;
   final String customerName;
-  final int mobileNumber;
-  final String city;
-  final String category;
-  final String productName;
-  final int purchasePrice;
-  final int sellingPrice;
-  final int qty;
+  final String mobileNumber;
   final int totalAmount;
+  final List<BillItemModel> items;
 
   BillingListModel({
-    required this.id,
+    required this.billId,
     required this.date,
+    required this.address,
     required this.customerName,
     required this.mobileNumber,
-    required this.city,
-    required this.category,
-    required this.productName,
-    required this.purchasePrice,
-    required this.sellingPrice,
-    required this.qty,
     required this.totalAmount,
+    required this.items,
   });
 
   factory BillingListModel.fromJson(Map<String, dynamic> json) {
     return BillingListModel(
-      id: int.tryParse(json['Id']?.toString() ?? '0') ?? 0,
+      billId: int.tryParse(json['BillID']?.toString() ?? '0') ?? 0,
       date: json['Date']?.toString() ?? '',
       customerName: json['CustomerName']?.toString() ?? '',
-      mobileNumber: int.tryParse(json['MobileNumber']?.toString() ?? '0') ?? 0,
-      city: json['City']?.toString() ?? '',
-      category: json['Category']?.toString() ?? '',
-      productName: json['ProductName']?.toString() ?? '',
-      purchasePrice: int.tryParse(json['PurchasePrice']?.toString() ?? '0') ?? 0,
-      sellingPrice: int.tryParse(json['SellingPrice']?.toString() ?? '0') ?? 0,
-      qty: int.tryParse(json['Qty']?.toString() ?? '0') ?? 0,
+      address: json['Address']?.toString() ?? '',
+      mobileNumber: json['MobileNumber']?.toString() ?? '',
       totalAmount: int.tryParse(json['TotalAmount']?.toString() ?? '0') ?? 0,
+      items: (json['items'] as List<dynamic>? ?? [])
+          .map((item) => BillItemModel.fromJson(item))
+          .toList(),
+    );
+  }
+}
+
+class BillItemModel {
+  final String productId;
+  final String productName;
+  final String category;
+  final String color;
+  final int price;
+  final int quantity;
+  final int total;
+
+  BillItemModel({
+    required this.productId,
+    required this.productName,
+    required this.category,
+    required this.color,
+    required this.price,
+    required this.quantity,
+    required this.total,
+  });
+
+  factory BillItemModel.fromJson(Map<String, dynamic> json) {
+    return BillItemModel(
+      productId: json['productId']?.toString() ?? '',
+      productName: json['productName']?.toString() ?? '',
+      category: json['category']?.toString() ?? '',
+      color: json['color']?.toString() ?? '',
+      price: int.tryParse(json['price']?.toString() ?? '0') ?? 0,
+      quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
+      total: int.tryParse(json['total']?.toString() ?? '0') ?? 0,
     );
   }
 }

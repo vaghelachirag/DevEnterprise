@@ -31,12 +31,13 @@ class BillingScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           DateNavigator(selectedDate: selectedDate),
           const SizedBox(height: 8),
-
+          // ✅ Use AsyncValue.when to handle loading/error/data
           Expanded(
             child: billsAsync.when(
               loading: () => const CommonLoader(message: "Loading Billing..."),
               error: (err, _) => Center(child: Text("${"error".tr()}: $err")),
               data: (bills) {
+                // ✅ Filter bills using search query
                 final filtered = bills.where((bill) {
                   return bill.customerName.toLowerCase().contains(
                         query.toLowerCase(),
@@ -68,6 +69,7 @@ class BillingScreen extends ConsumerWidget {
                     ),
                   );
                 }
+
                 return ListView.separated(
                   padding: const EdgeInsets.all(12),
                   itemCount: filtered.length,
@@ -80,15 +82,15 @@ class BillingScreen extends ConsumerWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => BillDetailScreen(
-                              billNo: customer.billId.toString(),
+                              billNo: customer.id.toString(),
                               customerName: customer.customerName,
                               mobileNumber: customer.mobileNumber.toString(),
-                              address: customer.address,
+                              address: customer.city,
                               billDate: customer.date,
-                              productName: "",
-                              category: "",
-                              price: "",
-                              qty: "",
+                              productName: customer.productName,
+                              category: customer.category,
+                              price: customer.sellingPrice.toString(),
+                              qty: customer.qty.toString(),
                               totalAmount: customer.totalAmount.toString(),
                             ),
                           ),
@@ -146,6 +148,7 @@ class BillingScreen extends ConsumerWidget {
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
+                                          // ✅ If customer.date is String, parse safely
                                           customer.date.toString(),
                                           style: GoogleFonts.poppins(
                                             fontSize: 13,

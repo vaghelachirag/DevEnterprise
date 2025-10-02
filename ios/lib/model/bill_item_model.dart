@@ -17,33 +17,30 @@ class BillItemModel {
     required this.totalAmount,
   });
 
-  /// Convert model to JSON (map)
   Map<String, dynamic> toJson() {
     return {
-      "ProductId": productId,
-      "ProductName": productName,
-      "Category": category,
-      "Color": color, // Capitalized key for consistency
-      "SellingPrice": price.toStringAsFixed(2),
-      "Qty": quantity,
-      "TotalAmount": totalAmount.toStringAsFixed(2),
+      "productId": productId,
+      "productName": productName,
+      "category": category,
+      "color": color,
+      "price": price.toStringAsFixed(2),
+      "quantity": quantity,
+      "totalAmount": totalAmount.toStringAsFixed(2),
     };
   }
 
-  /// Create model from JSON (map)
   factory BillItemModel.fromJson(Map<String, dynamic> json) {
     return BillItemModel(
-      productId: json["ProductId"]?.toString() ?? "",
-      productName: json["ProductName"]?.toString() ?? "",
-      category: json["Category"]?.toString() ?? "",
-      color: json["Color"]?.toString() ?? "", // Fixed casing
-      price: _toDouble(json["SellingPrice"]),
-      quantity: _toInt(json["Qty"]),
-      totalAmount: _toDouble(json["TotalAmount"]),
+      productId: json["productId"]?.toString() ?? "",
+      productName: json["productName"]?.toString() ?? "",
+      category: json["category"]?.toString() ?? "",
+      color: json["color"]?.toString() ?? "",
+      price: _toDouble(json["price"]),
+      quantity: _toInt(json["quantity"]),
+      totalAmount: _toDouble(json["totalAmount"]),
     );
   }
 
-  /// Copy with new values
   BillItemModel copyWith({
     String? productId,
     String? productName,
@@ -65,7 +62,6 @@ class BillItemModel {
   }
 }
 
-/// Helpers for safe parsing
 double _toDouble(dynamic v) {
   if (v is num) return v.toDouble();
   return double.tryParse(v?.toString() ?? "0") ?? 0.0;
